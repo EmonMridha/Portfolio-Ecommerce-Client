@@ -6,8 +6,9 @@ const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
 
-    const [currentUser, setCurrentUser] = useState(null);
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    console.log(user);
 
     // Register 
     const createUser = (email, password) => {
@@ -36,12 +37,13 @@ const AuthProvider = ({ children }) => {
             .finally(() => setLoading(false)); // runs whether the operation is successful or not, ensuring loading is set to false after the operation completes
     }
 
+    // useEffect will run once when the component mounts.
     useEffect(() => {
         const unSubscribe = onAuthStateChanged(auth, currentUser => {
-            setCurrentUser(currentUser);
+            setUser(currentUser);
             setLoading(false);
         })
-        return unSubscribe();
+        return unSubscribe;
     }, [])
 
     const authInfo = {
@@ -50,7 +52,7 @@ const AuthProvider = ({ children }) => {
         signIn,
         logOut,
         createUserWithGoogle,
-        currentUser
+        user
     };
     return (
         // all the children components will have access to the authInfo value
