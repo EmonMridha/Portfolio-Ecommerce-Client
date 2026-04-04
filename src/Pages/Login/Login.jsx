@@ -1,14 +1,44 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
+import useAuth from '../../Hooks/useAuth';
+import Swal from 'sweetalert2';
 
 const Login = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const { signIn, createUserWithGoogle } = useAuth();
 
+
+    // handle form submission
     const onSubmit = formData => {
-        console.log(formData);
+        signIn(formData.email, formData.password)
+            .then(result => {
+                if (result.user) {
+                    Swal.fire('Logged In Successfully', '', 'success');
+                }
+                else {
+                    Swal.fire('Login Failed', 'Invalid email or password', 'error');
+                }
+            })
+            .catch(error => {
+                Swal.fire('Login Failed or found not user', error.message, 'error');
+            })
     }
+
+
+    // handle Google Sign-In
+    const gooogleSignIn = () => {
+        createUserWithGoogle()
+            .then(result => {
+                Swal.fire('Signed In with Google Successfully', '', 'success');
+            })
+            .catch(error => {
+                Swal.fire('Google Sign-In Failed', error.message, 'error');
+            })
+    }
+
+
     return (
         <main className="w-full h-screen flex flex-col items-center justify-center bg-amber-50 px-4">
             <div className="max-w-sm w-full text-gray-600 space-y-5">
@@ -18,8 +48,10 @@ const Login = () => {
                         <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">Log in to your account</h3>
                     </div>
                 </div>
-                <form
-                    onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+
+
+                    {/* Email */}
                     <div>
                         <label className="font-medium">
                             Email
@@ -31,6 +63,9 @@ const Login = () => {
                         />
                         {errors.email && <p className="text-red-500 text-sm mt-1">Email is required</p>}
                     </div>
+
+
+                    {/* Password */}
                     <div>
                         <label className="font-medium">
                             Password
@@ -42,6 +77,9 @@ const Login = () => {
                         />
                         {errors.password && <p className="text-red-500 text-sm mt-1">Password is required</p>}
                     </div>
+
+
+                    {/* Remember Me */}
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-x-3">
                             <input type="checkbox" id="remember-me-checkbox" className="checkbox-item peer hidden" />
@@ -54,13 +92,19 @@ const Login = () => {
                         </div>
                         <a href="javascript:void(0)" className="text-center text-indigo-600 hover:text-indigo-500">Forgot password?</a>
                     </div>
+
+
+                    {/* Sign In Button */}
                     <button
                         className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
                     >
                         Sign in
                     </button>
                 </form>
-                <button className="w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 duration-150 active:bg-gray-100">
+
+
+                {/* Continue with Google */}
+                <button onClick={gooogleSignIn} className="w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 duration-150 active:bg-gray-100">
                     <svg className="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_17_40)">
                             <path d="M47.532 24.5528C47.532 22.9214 47.3997 21.2811 47.1175 19.6761H24.48V28.9181H37.4434C36.9055 31.8988 35.177 34.5356 32.6461 36.2111V42.2078H40.3801C44.9217 38.0278 47.532 31.8547 47.532 24.5528Z" fill="#4285F4" />
@@ -76,6 +120,9 @@ const Login = () => {
                     </svg>
                     Continue with Google
                 </button>
+
+
+                {/* Sign up Link */}
                 <Link to="/register" className="text-center">Don't have an account? <a href="javascript:void(0)" className="font-medium text-indigo-600 hover:text-indigo-500">Sign up</a></Link>
             </div>
         </main>

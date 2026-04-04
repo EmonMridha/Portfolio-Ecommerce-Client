@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import useAuth from '../../Hooks/useAuth';
 import { updateProfile } from 'firebase/auth';
-import { auth } from '../../firebase/firebase.init';
 import Swal from 'sweetalert2';
 
 const Register = () => {
@@ -12,6 +11,8 @@ const Register = () => {
     const { createUser, createUserWithGoogle } = useAuth();
     const navigate = useNavigate(); // for navigating to another page after successful registration
 
+
+    // handle form submission
     const onSubmit = formData => {
         createUser(formData.email, formData.password)
             .then(result => {
@@ -29,10 +30,11 @@ const Register = () => {
             })
     }
 
+
+    // handle Google Sign-In
     const googleSignIn = () => {
         createUserWithGoogle()
             .then(result => {
-
                 Swal.fire('Signed In Successfully', '', 'success');
                 navigate('/'); // navigate to home page after successful sign-in
             })
@@ -41,6 +43,8 @@ const Register = () => {
                 Swal.fire('Google Sign-In Failed', error.message, 'error');
             })
     }
+
+
     return (
         <main className="w-full h-screen flex flex-col items-center justify-center bg-amber-50 px-4">
             <div className="max-w-sm w-full text-gray-600 space-y-5">
@@ -51,6 +55,9 @@ const Register = () => {
                     </div>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
+
+
+                    {/* Name */}
                     <div>
                         <label className="font-medium">
                             Name
@@ -62,6 +69,9 @@ const Register = () => {
                         />
                         {errors.name && <p className="text-red-500 text-sm mt-1">Name is required</p>}
                     </div>
+
+
+                    {/* Photo URL */}
                     <div>
                         <label className="font-medium">
                             Photo URL
@@ -73,6 +83,9 @@ const Register = () => {
                         />
                         {errors.photoURL && <p className="text-red-500 text-sm mt-1">Photo URL is required</p>}
                     </div>
+
+
+                    {/* Email */}
                     <div>
                         <label className="font-medium">
                             Email
@@ -84,6 +97,9 @@ const Register = () => {
                         />
                         {errors.email && <p className="text-red-500 text-sm mt-1">Email is required</p>}
                     </div>
+
+
+                    {/* Password */}
                     <div>
                         <label className="font-medium">
                             Password
@@ -95,6 +111,9 @@ const Register = () => {
                         />
                         {errors.password && <p className="text-red-500 text-sm mt-1">Password is required</p>}
                     </div>
+
+
+                    {/* Remember Me */}
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-x-3">
                             <input type="checkbox" id="remember-me-checkbox" className="checkbox-item peer hidden" />
@@ -106,12 +125,18 @@ const Register = () => {
                             <span>Remember me</span>
                         </div>
                     </div>
+
+
+                    {/* Sign Up Button */}
                     <button
                         className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
                     >
                         Sign up
                     </button>
                 </form>
+
+
+                {/* Google Sign-In Button */}
                 <button onClick={googleSignIn} className="w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 duration-150 active:bg-gray-100">
                     <svg className="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_17_40)">
@@ -128,6 +153,9 @@ const Register = () => {
                     </svg>
                     Continue with Google
                 </button>
+
+
+                {/* Sign In Link */}
                 <Link to="/login" className="text-center">Already Have an account? <a href="javascript:void(0)" className="font-medium text-indigo-600 hover:text-indigo-500">Sign In</a></Link>
             </div>
         </main>
