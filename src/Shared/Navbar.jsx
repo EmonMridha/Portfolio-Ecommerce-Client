@@ -22,7 +22,7 @@ const Navbar = () => {
 
             {/* Left - Logo */}
             <div className="navbar-start">
-                <Link to="/">NextShop</Link>
+                <Link className='text-sky-400 font-bold text-3xl' to="/">NextShop</Link>
             </div>
 
 

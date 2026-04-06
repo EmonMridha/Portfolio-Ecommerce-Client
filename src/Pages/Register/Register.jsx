@@ -4,28 +4,44 @@ import { Link, useNavigate } from 'react-router';
 import useAuth from '../../Hooks/useAuth';
 import { updateProfile } from 'firebase/auth';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const Register = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { createUser, createUserWithGoogle } = useAuth();
     const navigate = useNavigate(); // for navigating to another page after successful registration
+    const axiosSecure = useAxiosSecure();
 
 
     // handle form submission
     const onSubmit = formData => {
         createUser(formData.email, formData.password)
-            .then(result => {
+            .then((result) => {
                 const user = result.user;
                 updateProfile(user, {
                     displayName: formData.name,
                     photoURL: formData.photoURL
                 })
-                Swal.fire('Registered Successfully', '', 'success');
-                navigate('/'); // navigate to home page after successful registration
+
+                const userData = {
+                    name: formData.name,
+                    email: formData.email,
+                    createdAt: new Date()
+                }
+
+                axiosSecure.post('/users', userData)
+                    .then((response) => {
+                        if (response.data.insertedId) {
+                            Swal.fire('Registration Successful', '', 'success');
+                            navigate('/'); // navigate to home page after successful registration
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user data:', error);
+                    });
             })
-            .catch(error => {
-                console.log(error);
+            .catch((error) => {
                 Swal.fire('Registration Failed', error.message, 'error');
             })
     }
@@ -34,12 +50,25 @@ const Register = () => {
     // handle Google Sign-In
     const googleSignIn = () => {
         createUserWithGoogle()
-            .then(result => {
-                Swal.fire('Signed In Successfully', '', 'success');
-                navigate('/'); // navigate to home page after successful sign-in
+            .then((result) => {
+                const user = result.user;
+                const userData = {
+                    name: user.displayName,
+                    email: user.email,
+                    createdAt: new Date()
+                }
+                axiosSecure.post('/users', userData)
+                    .then((response) => {
+                        if (response.data.insertedId) {
+                            Swal.fire('Google Sign-In Successful', '', 'success');
+                            navigate('/'); // navigate to home page after successful sign-in
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user data:', error);
+                    });
             })
-            .catch(error => {
-                console.log(error);
+            .catch((error) => {
                 Swal.fire('Google Sign-In Failed', error.message, 'error');
             })
     }

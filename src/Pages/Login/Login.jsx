@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, Navigate, useNavigate } from 'react-router';
 import useAuth from '../../Hooks/useAuth';
 import Swal from 'sweetalert2';
 
@@ -8,6 +8,7 @@ const Login = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { signIn, createUserWithGoogle } = useAuth();
+    const navigate = useNavigate(); // for navigating to another page
 
 
     // handle form submission
@@ -16,6 +17,7 @@ const Login = () => {
             .then(result => {
                 if (result.user) {
                     Swal.fire('Logged In Successfully', '', 'success');
+                    navigate('/'); // navigate to home page after successful login
                 }
                 else {
                     Swal.fire('Login Failed', 'Invalid email or password', 'error');
@@ -32,6 +34,8 @@ const Login = () => {
         createUserWithGoogle()
             .then(result => {
                 Swal.fire('Signed In with Google Successfully', '', 'success');
+                navigate('/'); // navigate to home page after successful sign-in
+
             })
             .catch(error => {
                 Swal.fire('Google Sign-In Failed', error.message, 'error');
