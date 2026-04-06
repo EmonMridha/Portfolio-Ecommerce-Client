@@ -60,12 +60,12 @@ const Register = () => {
                 axiosSecure.post('/users', userData)
                     .then((response) => {
                         if (response.data.insertedId) {
-                            Swal.fire('Google Sign-In Successful', '', 'success');
+                            Swal.fire('Google Sign-In Successful and User Data Saved', '', 'success');
                             navigate('/'); // navigate to home page after successful sign-in
                         }
                     })
-                    .catch((error) => {
-                        console.error('Error saving user data:', error);
+                    .catch((goodError) => {
+                        Swal.fire('Google Sign-In Successful and user already exists', 'success');
                     });
             })
             .catch((error) => {

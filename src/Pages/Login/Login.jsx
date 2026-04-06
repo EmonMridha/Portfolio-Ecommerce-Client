@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link, Navigate, useNavigate } from 'react-router';
 import useAuth from '../../Hooks/useAuth';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const Login = () => {
 
@@ -33,8 +34,22 @@ const Login = () => {
     const gooogleSignIn = () => {
         createUserWithGoogle()
             .then(result => {
-                Swal.fire('Signed In with Google Successfully', '', 'success');
-                navigate('/'); // navigate to home page after successful sign-in
+                const user = result.user;
+                const userData = {
+                    name: user.displayName,
+                    email: user.email,
+                    createdAt: new Date()
+                }
+                useAxiosSecure.post('/users', userData)
+                    .then((response) => {
+                        if (response.data.insertedId) {
+                            Swal.fire('Google Sign-In Successful and User Data Saved', '', 'success');
+                            navigate('/'); // navigate to home page after successful sign-in
+                        }
+                    })
+                    .catch((error) => {
+                        Swal.fire('Google Sign-In Successful but Error saving user data', error.message, 'error');
+                    });
 
             })
             .catch(error => {
