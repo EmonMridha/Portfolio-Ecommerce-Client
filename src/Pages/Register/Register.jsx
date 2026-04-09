@@ -27,22 +27,23 @@ const Register = () => {
                 const userData = {
                     name: formData.name,
                     email: formData.email,
-                    createdAt: new Date()
                 }
 
-                axiosSecure.post('/users', userData)
+                axiosSecure.put('/users', userData)
                     .then((response) => {
-                        if (response.data.insertedId) {
+                        console.log(response.data);
+                        if (response.data.upsertedId) {
+
                             Swal.fire('Registration Successful', '', 'success');
                             navigate('/'); // navigate to home page after successful registration
                         }
                     })
                     .catch((error) => {
-                        console.error('Error saving user data:', error);
+                        console.error('SignIn successfully but user already exists:', error);
                     });
             })
             .catch((error) => {
-                Swal.fire('Registration Failed', error.message, 'error');
+                Swal.fire('Registration/Login Failed', error.message, 'error');
             })
     }
 
@@ -55,13 +56,18 @@ const Register = () => {
                 const userData = {
                     name: user.displayName,
                     email: user.email,
-                    createdAt: new Date()
                 }
-                axiosSecure.post('/users', userData)
+                axiosSecure.put('/users', userData)
                     .then((response) => {
-                        if (response.data.insertedId) {
+                        console.log(response.data);
+                        if (response.data.upsertedId) {
                             Swal.fire('Google Sign-In Successful and User Data Saved', '', 'success');
+                                navigate('/'); // navigate to home page after successful sign-in
+                        }
+                        else {
+                            Swal.fire('Google Sign-In Successful but User Data Already Exists', '', 'success');
                             navigate('/'); // navigate to home page after successful sign-in
+
                         }
                     })
                     .catch((goodError) => {
